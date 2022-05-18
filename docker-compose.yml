@@ -1,0 +1,8 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.0.22
+    environment:
+      - MYSQL_ROOT_PASSWORD=qwert
+    ports:
+      - 3306:3306
