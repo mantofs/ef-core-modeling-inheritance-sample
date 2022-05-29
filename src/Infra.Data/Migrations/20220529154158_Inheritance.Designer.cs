@@ -3,6 +3,7 @@ using System;
 using Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(EFCoreDbContext))]
-    partial class EFCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220529154158_Inheritance")]
+    partial class Inheritance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,6 +88,13 @@ namespace Infra.Data.Migrations
                         .HasColumnType("varchar(300)")
                         .IsFixedLength(false);
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)")
+                        .IsFixedLength(false);
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -105,9 +114,6 @@ namespace Infra.Data.Migrations
             modelBuilder.Entity("Domain.Entities.WithdrawOrder", b =>
                 {
                     b.HasBaseType("Domain.Entities.Order");
-
-                    b.Property<double>("Earnings")
-                        .HasColumnType("double");
 
                     b.HasDiscriminator().HasValue("WithdrawOrder");
                 });

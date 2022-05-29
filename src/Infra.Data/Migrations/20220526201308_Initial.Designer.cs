@@ -3,6 +3,7 @@ using System;
 using Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(EFCoreDbContext))]
-    partial class EFCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220526201308_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,7 +81,7 @@ namespace Infra.Data.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Discriminator")
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(300)
                         .IsUnicode(false)
@@ -91,25 +93,6 @@ namespace Infra.Data.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Order");
-                });
-
-            modelBuilder.Entity("Domain.Entities.PurchaseOrder", b =>
-                {
-                    b.HasBaseType("Domain.Entities.Order");
-
-                    b.HasDiscriminator().HasValue("PurchaseOrder");
-                });
-
-            modelBuilder.Entity("Domain.Entities.WithdrawOrder", b =>
-                {
-                    b.HasBaseType("Domain.Entities.Order");
-
-                    b.Property<double>("Earnings")
-                        .HasColumnType("double");
-
-                    b.HasDiscriminator().HasValue("WithdrawOrder");
                 });
 
             modelBuilder.Entity("Domain.Entities.Item", b =>

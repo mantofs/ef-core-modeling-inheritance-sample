@@ -32,6 +32,8 @@ namespace Infra.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Type = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -56,7 +58,7 @@ namespace Infra.Data.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Value = table.Column<decimal>(type: "decimal(8,6)", precision: 8, scale: 6, nullable: false),
                     Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -65,7 +67,8 @@ namespace Infra.Data.Migrations
                         name: "FK_Items_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 

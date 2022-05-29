@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(EFCoreDbContext))]
-    [Migration("20220518002703_Initial")]
-    partial class Initial
+    [Migration("20220529155555_AddWithdrawOrderEarnings")]
+    partial class AddWithdrawOrderEarnings
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,6 @@ namespace Infra.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Created")
@@ -45,7 +44,6 @@ namespace Infra.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Item", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Created")
@@ -58,7 +56,7 @@ namespace Infra.Data.Migrations
                         .HasColumnType("varchar(300)")
                         .IsFixedLength(false);
 
-                    b.Property<Guid?>("OrderId")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("char(36)");
 
                     b.Property<decimal>("Value")
@@ -75,7 +73,6 @@ namespace Infra.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Created")
@@ -84,18 +81,46 @@ namespace Infra.Data.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)")
+                        .IsFixedLength(false);
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Order");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PurchaseOrder", b =>
+                {
+                    b.HasBaseType("Domain.Entities.Order");
+
+                    b.HasDiscriminator().HasValue("PurchaseOrder");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WithdrawOrder", b =>
+                {
+                    b.HasBaseType("Domain.Entities.Order");
+
+                    b.Property<double>("Earnings")
+                        .HasColumnType("double");
+
+                    b.HasDiscriminator().HasValue("WithdrawOrder");
                 });
 
             modelBuilder.Entity("Domain.Entities.Item", b =>
                 {
                     b.HasOne("Domain.Entities.Order", "Order")
                         .WithMany("Items")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Order");
                 });
